@@ -5,6 +5,8 @@ import (
 	"gothello/WebsocketHandlers"
 	"log"
 	"net/http"
+
+	_ "github.com/heroku/x/hmetrics/onload"
 )
 
 
