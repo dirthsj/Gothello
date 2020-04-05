@@ -1,1 +1,1 @@
-web: go run gothello
+web: gothello
