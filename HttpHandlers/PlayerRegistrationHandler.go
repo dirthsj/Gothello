@@ -3,6 +3,7 @@ package HttpHandlers
 import (
 	"encoding/json"
 	"gothello/Game"
+	"gothello/Security"
 	"net/http"
 )
 
@@ -14,6 +15,7 @@ type PlayerIdRequest struct {
 
 type PlayerIdResponse struct {
 	PlayerId int
+	PlayerToken string
 }
 
 func(s *PlayerRegistrationHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -21,5 +23,11 @@ func(s *PlayerRegistrationHandler) ServeHTTP(w http.ResponseWriter, r *http.Requ
 	var request PlayerIdRequest
 	_ = json.NewDecoder(r.Body).Decode(&request)
 	response.PlayerId = Game.GetGothelloServerState().ConnectPlayer(request.PlayerName)
+	token, err := Security.CreateGothelloToken(response.PlayerId)
+	if err != nil {
+		WriteBadRequestResponse(w, err.Error())
+		return
+	}
+	response.PlayerToken = token
 	_ = WriteJsonResponse(w, response)
 }
