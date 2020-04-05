@@ -31,5 +31,5 @@ func main() {
 	http.HandleFunc("/ws/game/", func(w http.ResponseWriter, r *http.Request) {
 		WebsocketHandlers.ServeGameWs(gameHub, w, r)
 	})
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":80", nil))
 }
