@@ -1,5 +1,0 @@
-[metadata.heroku]
-    root-package = "gothello"
-    go-version = "go1.14.1"
-    install = ["./..."]
-    ensure = false
