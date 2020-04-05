@@ -27,7 +27,13 @@ window.addEventListener('load', () => {
     form.addEventListener('submit', handleSubmit);
 
     if (window["WebSocket"]) {
-        conn = new WebSocket("ws://" + document.location.host + "/ws/chat");
+        let websocketPrefix;
+        if (location.protocol === "https:" )  {
+            websocketPrefix = "wss://"
+        } else {
+            websocketPrefix = "ws://"
+        }
+        conn = new WebSocket(websocketPrefix + document.location.host + "/ws/chat");
         conn.onclose = function (evt) {
             var item = document.createElement("div");
             item.innerHTML = "<b>Connection closed.</b>";

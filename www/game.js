@@ -15,7 +15,13 @@ while (playerName == null) {
 postJson("/register", {PlayerName: playerName}, (response) => {
     response.json().then((data) => {
         playerId = data["PlayerId"];
-        conn = new WebSocket("ws://" + document.location.host + "/ws/game/" + playerId);
+        let websocketPrefix;
+        if (location.protocol === "https:" )  {
+            websocketPrefix = "wss://"
+        } else {
+            websocketPrefix = "ws://"
+        }
+        conn = new WebSocket(websocketPrefix + document.location.host + "/ws/game/" + playerId);
         conn.onclose = (evt) => {
             alert("Disconnected from server, page will now reload");
             window.location.reload();
