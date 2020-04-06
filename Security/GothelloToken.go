@@ -8,8 +8,8 @@ import (
 	"time"
 )
 const (
-	hmacSampleSecret = "qOf5Xxqhp5TnlCxULjmqgcAznxGif3dwTrNGLUUqVnzMx0cm1Ti6m6l2TB8nT44t"
-	bearerSchema = "Bearer "
+	hmacSecret          = "qOf5Xxqhp5TnlCxULjmqgcAznxGif3dwTrNGLUUqVnzMx0cm1Ti6m6l2TB8nT44t"
+	bearerSchema        = "Bearer "
 	authorizationHeader = "Authorization"
 )
 
@@ -27,13 +27,15 @@ func CreateGothelloToken(playerId int) (string, error) {
 			NotBefore: time.Date(2020, 04, 01,00,00,00,00, time.Local).Unix(),
 		},
 	}
-	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(hmacSampleSecret)
+	var key = []byte(hmacSecret)
+	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(key)
 }
 
 func GetPlayerIdFromToken(token string) int {
 	var claims gothelloClaims
 	jwtToken, _ := jwt.ParseWithClaims(token, &claims, func(token *jwt.Token) (interface{}, error) {
-		return hmacSampleSecret, nil
+		var key = []byte(hmacSecret)
+		return key, nil
 	})
 	if jwtToken.Valid && claims.StandardClaims.Valid() == nil {
 		return claims.PlayerId

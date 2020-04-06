@@ -1,5 +1,7 @@
 package Game
 
+import "encoding/json"
+
 type GothelloGame struct {
 	whitePlayerId int
 	blackPlayerId int
@@ -10,9 +12,9 @@ type GothelloGame struct {
 type BoardSquareState string
 
 const(
-	Empty BoardSquareState = "Empty"
-	Black BoardSquareState = "Black"
-	White BoardSquareState = "White"
+	Empty BoardSquareState = "empty"
+	Black BoardSquareState = "black"
+	White BoardSquareState = "white"
 	BoardDimension int = 8
 )
 
@@ -63,12 +65,16 @@ func (game *GothelloGame) TryMove(playerId int, x int, y int) bool {
 	result = game.tryFlip(x - 1, y - 1, -1, -1, moveState, Empty) || result
 	result = game.tryFlip(x - 1, y    , -1,  0, moveState, Empty) || result
 	result = game.tryFlip(x - 1, y + 1, -1,  1, moveState, Empty) || result
+	if result {
+		game.set(x, y, moveState)
+		game.turn++
+	}
 	return result
 }
 
 func (game *GothelloGame) tryFlip(x int, y int, xi int, yi int, newSquareState BoardSquareState, previousSquareState BoardSquareState) bool {
 	// base case: out of bounds
-	if x < 0 || x > BoardDimension || y < 0 || y > BoardDimension {
+	if x < 0 || x >= BoardDimension || y < 0 || y >= BoardDimension {
 		return false
 	}
 	// base case: find a piece of the same color
@@ -94,6 +100,11 @@ func (game *GothelloGame) getCurrentPlayerId() int {
 	return game.blackPlayerId
 }
 
-func (game *GothelloGame) getPlayerIds() (int, int) {
+func (game *GothelloGame) GetPlayerIds() (int, int) {
 	return game.whitePlayerId, game.blackPlayerId;
+}
+
+func (game *GothelloGame) GetBoardUpdate() []byte {
+	update, _ := json.Marshal(game.board)
+	return update
 }
